@@ -167,7 +167,7 @@ jobs:
     environment: Production
     env:
       APP_ENV: production
-      NETLIFY_DEPLOY_TOKEN: ${{ secrets.NETLIFY_DEPLOY_TOKEN }}
+      # NETLIFY_DEPLOY_TOKEN: ${{ secrets.NETLIFY_DEPLOY_TOKEN }}
     steps:
       - name: Cloning repository
         uses: actions/checkout@v4
@@ -195,7 +195,8 @@ jobs:
           npx gulp buildFinalize
 
       - name: Deploying
-        env:
-          DEPLOY_ENVIRONMENT: ${{ inputs.deploy-environment || 'Staging' }}
+        # This explicitly uses the Netlify CLI command with your site ID and token
+        # instead of relying on a gulp task that might not be configured for your Netlify setup.
         run: |
-          npx gulp staticDeploy
+          NETLIFY_AUTH_TOKEN=${{ secrets.NETLIFY_DEPLOY_TOKEN }} npx netlify deploy --prod --site 69bbcc85-2aad-4a49-be6f-b6caef14bf1a --dir /home/runner/work/amp.dev.next/amp.dev.next/dist/pages
+        # Ensure that /home/runner/work/amp.dev.next/amp.dev.next/dist/pages is the correct build output directory.
