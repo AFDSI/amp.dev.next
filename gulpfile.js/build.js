@@ -46,9 +46,10 @@ const {PIXI_CLOUD_ROOT} = require('@lib/utils/project').paths;
 const {copyFile} = require('fs/promises');
 const nunjucks = require('nunjucks');
 const {importBlog} = require('@lib/templates/ImportBlogFilter.js');
-const {
-  importYouTubeChannel,
-} = require('@lib/templates/ImportYouTubeChannel.js');
+// Corrected (Prettier-compliant) and commented-out block
+// const {
+//     importYouTubeChannel,
+// } = require('@lib/templates/ImportYouTubeChannel.js');
 const {survey} = require('@lib/templates/SurveyFilter.js');
 const {
   SupportedFormatsExtension,
@@ -518,7 +519,7 @@ function nunjucksEnv() {
   );
   env.addFilter('importBlog', importBlog, true);
 
-  env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
+  // env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
   env.addFilter('survey', survey, true);
 
   return env;
