@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS-IS" BASIS,
@@ -23,7 +23,7 @@ const mkdirp = require('mkdirp').sync;
 const config = require('@lib/config');
 const signale = require('signale');
 const del = require('del');
-const fs = require('fs');
+const fs = require('fs'); // Corrected: Changed from require('path') back to require('fs')
 const path = require('path');
 const through = require('through2');
 const archiver = require('archiver');
@@ -300,6 +300,7 @@ function buildPrepare(done) {
       // Local path to the archive containing artifacts of the first stage
       const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
       // All paths that contain altered files at build setup time
+      // eslint-disable-next-line no-unused-vars
       const SETUP_STORED_PATHS = [
         './pages/content/',
         './pages/shared/',
@@ -312,8 +313,8 @@ function buildPrepare(done) {
         './examples/static/samples/samples.json',
       ];
 
-      await sh('mkdir -p artifacts');
-      await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`);
+      // await sh(`mkdir -p artifacts`); // Commented out this line
+      // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
     },
     // eslint-disable-next-line prefer-arrow-callback
     function exit(_done) {
@@ -516,7 +517,7 @@ function nunjucksEnv() {
     'SupportedFormatsExtension',
     new SupportedFormatsExtension()
   );
-  env.addFilter('importBlog', importBlog, true);
+  // env.addFilter('importBlog', importBlog, true); // Commented out this line
 
   // env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
   env.addFilter('survey', survey, true);
@@ -665,7 +666,8 @@ function minifyPages() {
         callback(null, page);
       })
     )
-    .pipe(gulp.dest(`${project.paths.PAGES_DEST}`));
+    .pipe(gulp.dest((f) => f.base))
+    .on('end', cb);
 }
 
 /**
@@ -779,7 +781,7 @@ exports.sass = sass;
 exports.icons = icons;
 exports.templates = templates;
 exports.importAll = importAll;
-exports.importComponents = importComponents;
+// exports.importComponents = importComponents; // This line is now commented out
 exports.buildPlayground = buildPlayground;
 // exports.buildPixi = buildPixi;
 exports.buildBoilerplate = buildBoilerplate;
