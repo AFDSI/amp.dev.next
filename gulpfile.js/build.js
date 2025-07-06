@@ -295,7 +295,7 @@ function buildPrepare(done) {
       importAll,
       zipTemplates
     ),
-// ... (inside buildPrepare function)
+    // ... (inside buildPrepare function)
     // eslint-disable-next-line prefer-arrow-callback
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
@@ -303,7 +303,8 @@ function buildPrepare(done) {
       const SETUP_ARCHIVE = 'artifacts/setup.tar.gz'; // Uncomment this line
       // All paths that contain altered files at build setup time
       // eslint-disable-next-line no-unused-vars
-      const SETUP_STORED_PATHS = [ // Uncomment this line and the array content
+      const SETUP_STORED_PATHS = [
+        // Uncomment this line and the array content
         './pages/content/',
         './pages/shared/',
         './dist/',
@@ -318,9 +319,9 @@ function buildPrepare(done) {
       await sh(`mkdir -p artifacts`); // Uncomment this line
       await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Uncomment this line
     }, // This comma is important if packArtifacts is part of a series/parallel array
-// ... (rest of the buildPrepare function)
+    // ... (rest of the buildPrepare function)
 
-    function exit(_done) {
+    (_done) => {
       done();
       _done();
       process.exit(0);
