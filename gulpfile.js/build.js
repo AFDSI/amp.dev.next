@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-'use strict';
+"use strict";
 
-const gulp = require('gulp');
-const {sh} = require('@lib/utils/sh');
-const grow = require('@lib/utils/grow');
-const mkdirp = require('mkdirp').sync;
-const config = require('@lib/config');
-const signale = require('signale');
-const del = require('del');
-const fs = require('fs'); // Corrected: Changed from require('path') back to require('fs')
-const path = require('path');
-const through = require('through2');
-const archiver = require('archiver');
-const yaml = require('js-yaml');
-const {samplesBuilder} = require('@lib/build/samplesBuilder');
-const {project} = require('@lib/utils');
-const git = require('@lib/utils/git');
+const gulp = require("gulp");
+const { sh } = require("@lib/utils/sh");
+const grow = require("@lib/utils/grow");
+const mkdirp = require("mkdirp").sync;
+const config = require("@lib/config");
+const signale = require("signale");
+const del = require("del");
+const fs = require("fs"); // Corrected: Changed from require('path') back to require('fs')
+const path = require("path");
+const through = require("through2");
+const archiver = require("archiver");
+const yaml = require("js-yaml");
+const { samplesBuilder } = require("@lib/build/samplesBuilder");
+const { project } = require("@lib/utils");
+const git = require("@lib/utils/git");
 // const ComponentReferenceImporter = require('@lib/pipeline/componentReferenceImporter');
 // const SpecImporter = require('@lib/pipeline/specImporter');
-const RecentGuides = require('@lib/pipeline/recentGuides');
-const gulpSass = require('gulp-sass')(require('sass'));
+const RecentGuides = require("@lib/pipeline/recentGuides");
+const gulpSass = require("gulp-sass")(require("sass"));
 // const importRoadmap = require('./import/importRoadmap.js');
 // const importWorkingGroups = require('./import/importWorkingGroups.js');
-const {staticify} = require('./staticify.js');
-const {whoAmI} = require('./whoAmI.js');
+const { staticify } = require("./staticify.js");
+const { whoAmI } = require("./whoAmI.js");
 // const importAdVendorList = require('./import/importAdVendorList.js');
-const {thumborImageIndex} = require('./thumbor.js');
-const CleanCSS = require('clean-css');
+const { thumborImageIndex } = require("./thumbor.js");
+const CleanCSS = require("clean-css");
 // const {PIXI_CLOUD_ROOT} = require('@lib/utils/project').paths;
-const {copyFile} = require('fs/promises');
-const nunjucks = require('nunjucks');
+const { copyFile } = require("fs/promises");
+const nunjucks = require("nunjucks");
 // const {importBlog} = require('@lib/templates/ImportBlogFilter.js');
 // const {
 //     importYouTubeChannel,
 // } = require('@lib/templates/ImportYouTubeChannel.js');
-const {survey} = require('@lib/templates/SurveyFilter.js');
+const { survey } = require("@lib/templates/SurveyFilter.js");
 const {
   SupportedFormatsExtension,
-} = require('@lib/templates/SupportedFormatsExtension.js');
-const {optimize} = require('@lib/utils/ampOptimizer.js');
-const toml = require('@iarna/toml');
+} = require("@lib/templates/SupportedFormatsExtension.js");
+const { optimize } = require("@lib/utils/ampOptimizer.js");
+const toml = require("@iarna/toml");
 
 // Path of the grow test pages for filtering in the grow podspec.yaml
-const TEST_CONTENT_PATH_REGEX = '^/tests/';
+const TEST_CONTENT_PATH_REGEX = "^/tests/";
 
 /**
  * Cleans all directories/files that get created by any of the following
@@ -68,37 +68,37 @@ const TEST_CONTENT_PATH_REGEX = '^/tests/';
 function clean() {
   return del(
     [
-      project.absolute('.cache/**/*'),
+      project.absolute(".cache/**/*"),
 
       project.paths.DIST,
       project.paths.BUILD,
 
-      project.absolute('boilerplate/dist'),
+      project.absolute("boilerplate/dist"),
 
       project.paths.CSS,
-      project.absolute('pages/extensions/**/*.pyc'),
+      project.absolute("pages/extensions/**/*.pyc"),
       project.absolute(
-        'pages/content/amp-dev/documentation/examples/documentation/**/*.html'
+        "pages/content/amp-dev/documentation/examples/documentation/**/*.html",
       ),
       project.absolute(
-        'pages/content/amp-dev/documentation/examples/previews/**/*.html'
+        "pages/content/amp-dev/documentation/examples/previews/**/*.html",
       ),
-      project.absolute('pages/icons'),
-      project.absolute('pages/layouts'),
-      project.absolute('pages/macros'),
-      project.absolute('pages/views'),
-      project.absolute('pages/.depcache.json'),
-      project.absolute('pages/podspec.yaml'),
+      project.absolute("pages/icons"),
+      project.absolute("pages/layouts"),
+      project.absolute("pages/macros"),
+      project.absolute("pages/views"),
+      project.absolute("pages/.depcache.json"),
+      project.absolute("pages/podspec.yaml"),
 
-      project.absolute('examples/static/samples/samples.json'),
+      project.absolute("examples/static/samples/samples.json"),
 
       project.paths.GROW_BUILD_DEST,
       project.paths.STATICS_DEST,
-      project.absolute('platform/static'),
+      project.absolute("platform/static"),
 
-      project.absolute('playground/dist'),
+      project.absolute("playground/dist"),
     ],
-    {'force': true}
+    { force: true },
   );
 }
 
@@ -109,17 +109,17 @@ function clean() {
  */
 function sass() {
   const options = {
-    'outputStyle': 'compressed',
-    'includePaths': [project.paths.SCSS],
+    outputStyle: "compressed",
+    includePaths: [project.paths.SCSS],
   };
 
   return gulp
     .src(`${project.paths.SCSS}/**/[^_]*.scss`)
     .pipe(gulpSass.sync(options))
-    .on('error', function (e) {
+    .on("error", function (e) {
       console.error(e);
       // eslint-disable-next-line no-invalid-this
-      this.emit('end');
+      this.emit("end");
     })
     .pipe(gulp.dest(project.paths.CSS));
 }
@@ -147,7 +147,7 @@ function icons() {
 }
 
 function buildFrontend21() {
-  return sh('npm run build:frontend');
+  return sh("npm run build:frontend");
 }
 
 /**
@@ -163,23 +163,23 @@ function buildFrontend(done) {
  * @return {Promise}
  */
 async function buildPlayground() {
-  await sh('mkdir -p playground/dist');
-  await sh('npm run build:playground');
+  await sh("mkdir -p playground/dist");
+  await sh("npm run build:playground");
 
   await gulp
-    .src(project.absolute('netlify/configs/preview.amp.dev/netlify.toml'))
+    .src(project.absolute("netlify/configs/preview.amp.dev/netlify.toml"))
     .pipe(gulp.dest(`${project.paths.DIST}/examples`));
 
   await gulp
-    .src([project.absolute('pages/static/**/*')])
+    .src([project.absolute("pages/static/**/*")])
     .pipe(gulp.dest(`${project.paths.DIST}/playground/static`));
 
   await gulp
-    .src(project.absolute('playground/dist/**/*'))
+    .src(project.absolute("playground/dist/**/*"))
     .pipe(gulp.dest(`${project.paths.DIST}/playground`));
 
   return await gulp
-    .src(project.absolute('netlify/configs/playground.amp.dev/netlify.toml'))
+    .src(project.absolute("netlify/configs/playground.amp.dev/netlify.toml"))
     .pipe(gulp.dest(`${project.paths.DIST}/playground`));
 }
 
@@ -206,8 +206,8 @@ async function buildPlayground() {
  * @return {Promise}
  */
 function buildBoilerplate() {
-  return sh('node build.js', {
-    workingDir: project.absolute('boilerplate'),
+  return sh("node build.js", {
+    workingDir: project.absolute("boilerplate"),
   });
 }
 
@@ -225,28 +225,28 @@ function buildSamples() {
  * Zips templates for download.
  */
 function zipTemplates() {
-  const templateDir = path.join(project.paths.DIST, 'static/files/templates/');
+  const templateDir = path.join(project.paths.DIST, "static/files/templates/");
   mkdirp(templateDir);
-  return gulp.src(project.paths.TEMPLATES + '/*/*/').pipe(
+  return gulp.src(project.paths.TEMPLATES + "/*/*/").pipe(
     through.obj(async (file, encoding, callback) => {
-      const archive = archiver('zip', {
-        'zlib': {'level': 9},
+      const archive = archiver("zip", {
+        zlib: { level: 9 },
       });
-      const zipFilePath = path.join(templateDir, file.basename + '.zip');
+      const zipFilePath = path.join(templateDir, file.basename + ".zip");
       const zipFileStream = fs.createWriteStream(zipFilePath);
       archive
-        .directory(file.path + '/', false)
+        .directory(file.path + "/", false)
         .pipe(zipFileStream)
-        .on('close', () => {
+        .on("close", () => {
           signale.success(`Zipped template ${zipFilePath}`);
           callback();
         })
-        .on('error', (e) => {
+        .on("error", (e) => {
           signale.error(`Writing template zip ${zipFilePath} failed`, e);
           callback(e);
         });
       archive.finalize();
-    })
+    }),
   );
 }
 
@@ -286,13 +286,14 @@ function buildPrepare(done) {
     // Build playground and boilerplate that early in the flow as they are
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
-    gulp.parallel( // This is the correct gulp.parallel block
+    gulp.parallel(
+      // This is the correct gulp.parallel block
       buildPlayground,
       buildBoilerplate,
       // buildPixi,
       buildFrontend21,
       importAll,
-      zipTemplates
+      zipTemplates,
     ),
     // eslint-disable-next-line prefer-arrow-callback
     async function packArtifacts() {
@@ -300,7 +301,6 @@ function buildPrepare(done) {
       // Local path to the archive containing artifacts of the first stage
       // Comment out or remove these unused variable declarations:
       // const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
-
       /*
        * Comment out the entire SETUP_STORED_PATHS array block
        * to avoid SyntaxError: Unexpected token ']'
@@ -316,7 +316,6 @@ function buildPrepare(done) {
       //   './.cache/',
       //   './examples/static/samples/samples.json',
       // ];
-
       // await sh(`mkdir -p artifacts`); // Commented out this line
       // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
     }, // This comma is important if packArtifacts is part of a series/parallel array
@@ -325,7 +324,7 @@ function buildPrepare(done) {
       done();
       _done();
       process.exit(0);
-    }
+    },
   )(done);
 }
 
@@ -335,18 +334,18 @@ function buildPrepare(done) {
  * @return {Promise}
  */
 function unpackArtifacts() {
-  let stream = gulp.src(['artifacts/**/*.tar.gz', 'artifacts/**/*.zip'], {
-    'read': false,
+  let stream = gulp.src(["artifacts/**/*.tar.gz", "artifacts/**/*.zip"], {
+    read: false,
   });
 
   stream = stream.pipe(
     through.obj(async (artifact, encoding, callback) => {
-      console.log('Unpacking', artifact.path, '...');
+      console.log("Unpacking", artifact.path, "...");
       await sh(`tar xf ${artifact.path}`);
       await sh(`rm ${artifact.path}`);
       stream.push(artifact);
       callback();
-    })
+    }),
   );
 
   return stream;
@@ -366,14 +365,14 @@ function buildPages(done) {
       const options = {};
       if (config.isTestMode()) {
         options.include_paths = TEST_CONTENT_PATH_REGEX;
-        options.locales = 'en';
+        options.locales = "en";
         options.noSitemap = true;
       } else if (config.isProdMode()) {
         options.ignore_paths = TEST_CONTENT_PATH_REGEX;
       }
       config.configureGrow(options);
 
-      await grow('deploy --noconfirm --threaded');
+      await grow("deploy --noconfirm --threaded");
     },
     minifyPages,
     // eslint-disable-next-line prefer-arrow-callback
@@ -388,72 +387,72 @@ function buildPages(done) {
     async function copyBuildFiles(done) {
       if (!config.options?.locales?.includes(config.getDefaultLocale())) {
         console.log(
-          'Skipping page publishing. Default language is not build, only:',
-          config.options.locales
+          "Skipping page publishing. Default language is not build, only:",
+          config.options.locales,
         );
         return done();
       }
 
       await copyFile(
         `${project.paths.GROW_POD}/static/manifest.json`,
-        `${project.paths.PAGES_DEST}/manifest.json`
+        `${project.paths.PAGES_DEST}/manifest.json`,
       );
 
       await copyFile(
         `${project.paths.GROW_POD}/static/serviceworker.js`,
-        `${project.paths.PAGES_DEST}/serviceworker.js`
+        `${project.paths.PAGES_DEST}/serviceworker.js`,
       );
 
       await copyFile(
         `${project.paths.GROW_BUILD_DEST}/index-2021.html`,
-        `${project.paths.PAGES_DEST}/index.html`
+        `${project.paths.PAGES_DEST}/index.html`,
       );
 
       await copyFile(
         `${project.paths.GROW_BUILD_DEST}/about/websites-2021.html`,
-        `${project.paths.PAGES_DEST}/about/websites.html`
+        `${project.paths.PAGES_DEST}/about/websites.html`,
       );
 
       await gulp
         .src([`${project.paths.TEMPLATES}/**/*`])
         .pipe(
           gulp.dest(
-            `${project.paths.PAGES_DEST}/documentation/templates/preview/`
-          )
+            `${project.paths.PAGES_DEST}/documentation/templates/preview/`,
+          ),
         );
 
       await gulp
-        .src([project.absolute('pages/static/**/*')])
+        .src([project.absolute("pages/static/**/*")])
         .pipe(gulp.dest(`${project.paths.PAGES_DEST}/static`));
 
       await gulp
-        .src(project.absolute('netlify/configs/amp.dev/netlify.toml'))
+        .src(project.absolute("netlify/configs/amp.dev/netlify.toml"))
         .pipe(
           through.obj((file, encoding, callback) => {
             let netlifyConfig = file.contents.toString();
 
-            const goLinks = project.absolute('platform/config/go-links.yaml');
-            let redirects = yaml.load(fs.readFileSync(goLinks, 'utf-8'));
+            const goLinks = project.absolute("platform/config/go-links.yaml");
+            let redirects = yaml.load(fs.readFileSync(goLinks, "utf-8"));
 
             // remove the regex entries in the go links, they were manually added
             // to the config
             redirects = Object.entries(redirects).filter(
-              ([path]) => !path.includes('^')
+              ([path]) => !path.includes("^"),
             );
 
             redirects = redirects.map(([from, to]) => {
               from = `https://go.amp.dev${from}`;
 
               // we only want to update the URL of shorturls that point to relative URLs
-              if (!to.startsWith('http://') && !to.startsWith('https://')) {
+              if (!to.startsWith("http://") && !to.startsWith("https://")) {
                 to = `https://amp.dev${to}`;
               }
 
               return {
                 from,
                 to,
-                'status': 302,
-                'force': true,
+                status: 302,
+                force: true,
               };
             });
 
@@ -468,7 +467,7 @@ function buildPages(done) {
             file.contents = Buffer.from(netlifyConfig);
 
             return callback(null, file);
-          })
+          }),
         )
         .pipe(gulp.dest(`${project.paths.PAGES_DEST}`));
 
@@ -494,10 +493,10 @@ function buildPages(done) {
       // we need to add all folders that contain files generated by the grow process...
       await sh(
         `tar cfj ${archive} ./dist/pages ./dist/inline-examples ` +
-          './dist/static/files/search-promoted-pages'
+          "./dist/static/files/search-promoted-pages",
       );
     },
-    whoAmI
+    whoAmI,
   )(done);
 }
 
@@ -508,23 +507,23 @@ function buildPages(done) {
 function nunjucksEnv() {
   const env = new nunjucks.Environment(null, {
     tags: {
-      blockStart: '[%',
-      blockEnd: '%]',
-      variableStart: '[=',
-      variableEnd: '=]',
-      commentStart: '[[[[#',
-      commentEnd: '#]]]]',
+      blockStart: "[%",
+      blockEnd: "%]",
+      variableStart: "[=",
+      variableEnd: "=]",
+      commentStart: "[[[[#",
+      commentEnd: "#]]]]",
     },
   });
 
   env.addExtension(
-    'SupportedFormatsExtension',
-    new SupportedFormatsExtension()
+    "SupportedFormatsExtension",
+    new SupportedFormatsExtension(),
   );
   // env.addFilter('importBlog', importBlog, true); // Commented out this line
 
   // env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
-  env.addFilter('survey', survey, true);
+  env.addFilter("survey", survey, true);
 
   return env;
 }
@@ -541,64 +540,64 @@ function optimizeFiles(cb) {
 
         console.log(`running optimize on ${file.path}...`);
 
-        optimize({query: ''}, unoptimizedFile, {}, file.path).then(
+        optimize({ query: "" }, unoptimizedFile, {}, file.path).then(
           (optimizedFile) => {
             file.contents = Buffer.from(optimizedFile);
             callback(null, file);
-          }
+          },
         );
-      })
+      }),
     )
     .pipe(gulp.dest((f) => f.base))
-    .on('end', cb);
+    .on("end", cb);
 }
 
 function newPost(text, img, id) {
   return {
     id: id,
     text: text,
-    img: '/static/samples/img/' + img,
+    img: "/static/samples/img/" + img,
     timestamp: Number(new Date()),
   };
 }
 
 async function renderExamples(done) {
-  const logger = require('@lib/utils/log')('Static File Generator');
+  const logger = require("@lib/utils/log")("Static File Generator");
   const env = nunjucksEnv();
   const blogItems = [
-    newPost('A green landscape with trees.', 'landscape_green_1280x853.jpg', 1),
+    newPost("A green landscape with trees.", "landscape_green_1280x853.jpg", 1),
     newPost(
-      'Mountains reflecting on a lake.',
-      'landscape_mountains_1280x657.jpg',
-      2
+      "Mountains reflecting on a lake.",
+      "landscape_mountains_1280x657.jpg",
+      2,
     ),
     newPost(
-      'A road leading to a lake with mountains on the back.',
-      'landscape_lake_1280x857.jpg',
-      3
+      "A road leading to a lake with mountains on the back.",
+      "landscape_lake_1280x857.jpg",
+      3,
     ),
     newPost(
-      'Forested hills with a grey sky in the background.',
-      'landscape_trees_1280x960.jpg',
-      4
+      "Forested hills with a grey sky in the background.",
+      "landscape_trees_1280x960.jpg",
+      4,
     ),
     newPost(
-      'Scattered houses in a mountain village.',
-      'landscape_village_1280x853.jpg',
-      5
+      "Scattered houses in a mountain village.",
+      "landscape_village_1280x853.jpg",
+      5,
     ),
-    newPost('A deep canyon.', 'landscape_canyon_1280x1700.jpg', 6),
+    newPost("A deep canyon.", "landscape_canyon_1280x1700.jpg", 6),
     newPost(
-      'A desert with mountains in the background.',
-      'landscape_desert_1280x853.jpg',
-      7
+      "A desert with mountains in the background.",
+      "landscape_desert_1280x853.jpg",
+      7,
     ),
-    newPost('Colorful houses on a street.', 'landscape_houses_1280x803.jpg', 8),
-    newPost('Blue sea surrounding a cave.', 'landscape_sea_1280x848.jpg', 9),
+    newPost("Colorful houses on a street.", "landscape_houses_1280x803.jpg", 8),
+    newPost("Blue sea surrounding a cave.", "landscape_sea_1280x848.jpg", 9),
     newPost(
-      'A ship sailing the sea at sunset.',
-      'landscape_ship_1280x853.jpg',
-      10
+      "A ship sailing the sea at sunset.",
+      "landscape_ship_1280x853.jpg",
+      10,
     ),
   ];
 
@@ -607,7 +606,7 @@ async function renderExamples(done) {
     timestamp: Number(new Date()),
     // send a random list of blog items to make it also work on the cache
     blogItems: blogItems.filter(() =>
-      Math.floor(Math.random() * Math.floor(2))
+      Math.floor(Math.random() * Math.floor(2)),
     ),
   };
 
@@ -626,10 +625,10 @@ async function renderExamples(done) {
           file.contents = Buffer.from(result);
           callback(null, file);
         });
-      })
+      }),
     )
     .pipe(gulp.dest((f) => f.base))
-    .on('end', () => {
+    .on("end", () => {
       done();
     });
 }
@@ -668,10 +667,10 @@ function minifyPages() {
 
         page.contents = Buffer.from(html);
         callback(null, page);
-      })
+      }),
     )
     .pipe(gulp.dest((f) => f.base))
-    .on('end', cb);
+    .on("end", cb);
 }
 
 /**
@@ -686,35 +685,35 @@ function collectStatics(done) {
 
   gulp
     .src([
-      project.absolute('pages/static/**/*'),
-      project.absolute('examples/static/**/*'),
-      project.absolute('frontend21/dist/static/**/*'),
+      project.absolute("pages/static/**/*"),
+      project.absolute("examples/static/**/*"),
+      project.absolute("frontend21/dist/static/**/*"),
     ])
     .pipe(
       through.obj(async function (file, encoding, callback) {
         // Skip potential archive parent directories to have the path writable later
-        if (file.stat.isDirectory() && file.path.endsWith('.zip')) {
+        if (file.stat.isDirectory() && file.path.endsWith(".zip")) {
           callback();
           return;
         }
 
         // Check if file could be part of a ZIP and not already is one itself
-        if (file.path.includes('.zip') && !file.path.endsWith('.zip')) {
+        if (file.path.includes(".zip") && !file.path.endsWith(".zip")) {
           // If the file should be part of a ZIP file pass it over to archiver
           const relativePath = file.relative.slice(
             0,
-            file.relative.indexOf('.zip') + 4
+            file.relative.indexOf(".zip") + 4,
           );
           const archive =
             archives[relativePath] ||
-            archiver('zip', {
-              'zlib': {'level': 9},
+            archiver("zip", {
+              zlib: { level: 9 },
             });
 
           // Only append real files, directories will be created automatically
-          const filePath = file.relative.replace(relativePath, '');
+          const filePath = file.relative.replace(relativePath, "");
           if (!file.stat.isDirectory() && filePath) {
-            archive.append(file.contents, {'name': filePath});
+            archive.append(file.contents, { name: filePath });
           }
 
           archives[relativePath] = archive;
@@ -726,11 +725,11 @@ function collectStatics(done) {
         // eslint-disable-next-line no-invalid-this
         this.push(file);
         callback();
-      })
+      }),
     )
     .pipe(gulp.dest(project.paths.STATICS_DEST))
-    .on('end', async () => {
-      signale.await('Writing ZIPs ...');
+    .on("end", async () => {
+      signale.await("Writing ZIPs ...");
 
       const writes = [];
       for (const [archivePath, contents] of Object.entries(archives)) {
@@ -741,11 +740,11 @@ function collectStatics(done) {
 
         writes.push(
           new Promise((resolve, reject) => {
-            contents.pipe(archive).on('close', () => {
+            contents.pipe(archive).on("close", () => {
               signale.success(`Wrote archive ${archivePath}`);
               resolve();
             });
-          })
+          }),
         );
       }
 
@@ -754,7 +753,7 @@ function collectStatics(done) {
         .pipe(gulp.dest(`${project.paths.DIST}/examples/sources/`));
 
       await Promise.all(writes);
-      signale.await('Finished collecting static files!');
+      signale.await("Finished collecting static files!");
       done();
     });
 }
@@ -767,13 +766,13 @@ function collectStatics(done) {
  */
 function persistBuildInfo(done) {
   const buildInfo = {
-    'number': process.env.GITHUB_RUN_ID || null,
-    'at': new Date(),
-    'by': process.env.GITHUB_ACTOR || git.user(),
-    'environment': config.environment,
-    'commit': {
-      'sha': process.env.GITHUB_SHA || git.version(),
-      'message': git.message(),
+    number: process.env.GITHUB_RUN_ID || null,
+    at: new Date(),
+    by: process.env.GITHUB_ACTOR || git.user(),
+    environment: config.environment,
+    commit: {
+      sha: process.env.GITHUB_SHA || git.version(),
+      message: git.message(),
     },
   };
 
@@ -802,15 +801,14 @@ exports.whoAmI = whoAmI;
 // exports.buildPixiFunctions = buildPixiFunctions;
 exports.buildFinalize = gulp.series(
   gulp.parallel(collectStatics, persistBuildInfo),
-  thumborImageIndex
+  thumborImageIndex,
 );
 
 exports.build = gulp.series(
   clean,
   buildPrepare,
   buildPages,
-  gulp.parallel(collectStatics, persistBuildInfo)
+  gulp.parallel(collectStatics, persistBuildInfo),
 );
 
 exports.buildForGrowTests = gulp.series(buildBoilerplate, buildPages);
-
