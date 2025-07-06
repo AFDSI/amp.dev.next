@@ -298,19 +298,19 @@ function buildPrepare(done) {
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
       // Local path to the archive containing artifacts of the first stage
-      const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
+      // const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
       // All paths that contain altered files at build setup time
       // eslint-disable-next-line no-unused-vars
-      const SETUP_STORED_PATHS = [
-        './pages/content/',
-        './pages/shared/',
-        './dist/',
-        './boilerplate/lib/',
-        './boilerplate/dist/',
-        './playground/dist/',
-        './frontend21/dist/',
-        './.cache/',
-        './examples/static/samples/samples.json',
+      // const SETUP_STORED_PATHS = [
+      //   './pages/content/',
+      //   './pages/shared/',
+      //   './dist/',
+      //   './boilerplate/lib/',
+      //   './boilerplate/dist/',
+      //   './playground/dist/',
+      //   './frontend21/dist/',
+      //   './.cache/',
+      //   './examples/static/samples/samples.json',
       ];
 
       // await sh(`mkdir -p artifacts`); // Commented out this line
