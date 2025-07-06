@@ -286,6 +286,15 @@ function buildPrepare(done) {
     // Build playground and boilerplate that early in the flow as they are
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
+    // --- ADD THIS STEP ---
+    async function copySamplesJson() {
+      const sourcePath = project.absolute('examples/static/samples/samples.json');
+      const destPath = path.join(project.paths.STATICS_DEST, 'samples/samples.json');
+      await mkdirp(path.dirname(destPath)); // Ensure destination directory exists
+      await copyFile(sourcePath, destPath);
+      signale.success(`Copied samples.json from ${sourcePath} to ${destPath}`);
+    },
+    // ---------------------
     gulp.parallel(
       buildPlayground,
       buildBoilerplate,
