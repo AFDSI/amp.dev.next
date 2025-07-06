@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS-IS" BASIS,
@@ -23,7 +23,7 @@ const mkdirp = require('mkdirp').sync;
 const config = require('@lib/config');
 const signale = require('signale');
 const del = require('del');
-const fs = require('fs'); // Corrected: Changed from require('path') back to require('fs')
+const fs = require('fs');
 const path = require('path');
 const through = require('through2');
 const archiver = require('archiver');
@@ -31,24 +31,24 @@ const yaml = require('js-yaml');
 const {samplesBuilder} = require('@lib/build/samplesBuilder');
 const {project} = require('@lib/utils');
 const git = require('@lib/utils/git');
-// const ComponentReferenceImporter = require('@lib/pipeline/componentReferenceImporter');
-// const SpecImporter = require('@lib/pipeline/specImporter');
+const ComponentReferenceImporter = require('@lib/pipeline/componentReferenceImporter');
+const SpecImporter = require('@lib/pipeline/specImporter');
 const RecentGuides = require('@lib/pipeline/recentGuides');
 const gulpSass = require('gulp-sass')(require('sass'));
-// const importRoadmap = require('./import/importRoadmap.js');
-// const importWorkingGroups = require('./import/importWorkingGroups.js');
+const importRoadmap = require('./import/importRoadmap.js');
+const importWorkingGroups = require('./import/importWorkingGroups.js');
 const {staticify} = require('./staticify.js');
 const {whoAmI} = require('./whoAmI.js');
-// const importAdVendorList = require('./import/importAdVendorList.js');
-// const {thumborImageIndex} = require('./thumbor.js');
+const importAdVendorList = require('./import/importAdVendorList.js');
+const {thumborImageIndex} = require('./thumbor.js');
 const CleanCSS = require('clean-css');
-// const {PIXI_CLOUD_ROOT} = require('@lib/utils/project').paths;
+const {PIXI_CLOUD_ROOT} = require('@lib/utils/project').paths;
 const {copyFile} = require('fs/promises');
 const nunjucks = require('nunjucks');
-// const {importBlog} = require('@lib/templates/ImportBlogFilter.js');
-// const {
-//     importYouTubeChannel,
-// } = require('@lib/templates/ImportYouTubeChannel.js');
+const {importBlog} = require('@lib/templates/ImportBlogFilter.js');
+const {
+  importYouTubeChannel,
+} = require('@lib/templates/ImportYouTubeChannel.js');
 const {survey} = require('@lib/templates/SurveyFilter.js');
 const {
   SupportedFormatsExtension,
@@ -98,7 +98,7 @@ function clean() {
 
       project.absolute('playground/dist'),
     ],
-    {force: true}
+    {'force': true}
   );
 }
 
@@ -109,8 +109,8 @@ function clean() {
  */
 function sass() {
   const options = {
-    outputStyle: 'compressed',
-    includePaths: [project.paths.SCSS],
+    'outputStyle': 'compressed',
+    'includePaths': [project.paths.SCSS],
   };
 
   return gulp
@@ -187,19 +187,19 @@ async function buildPlayground() {
  * Builds Pixi
  * @return {Promise}
  */
-// async function buildPixi() {
-//   await sh('mkdir -p pixi/dist');
-//   return sh('npm run build:pixi');
-// }
+async function buildPixi() {
+  await sh('mkdir -p pixi/dist');
+  return sh('npm run build:pixi');
+}
 
 /**
  * Builds the pixi cloud functions project
  */
-// function buildPixiFunctions() {
-//   return sh('npm install', {
-//     workingDir: PIXI_CLOUD_ROOT,
-//   });
-// }
+function buildPixiFunctions() {
+  return sh('npm install', {
+    workingDir: PIXI_CLOUD_ROOT,
+  });
+}
 
 /**
  * Builds the boilerplate generator
@@ -230,7 +230,7 @@ function zipTemplates() {
   return gulp.src(project.paths.TEMPLATES + '/*/*/').pipe(
     through.obj(async (file, encoding, callback) => {
       const archive = archiver('zip', {
-        zlib: {level: 9},
+        'zlib': {'level': 9},
       });
       const zipFilePath = path.join(templateDir, file.basename + '.zip');
       const zipFileStream = fs.createWriteStream(zipFilePath);
@@ -257,12 +257,12 @@ function zipTemplates() {
  */
 function importAll() {
   return Promise.all([
-    // new ComponentReferenceImporter().import(),
-    // new SpecImporter().import(),
+    new ComponentReferenceImporter().import(),
+    new SpecImporter().import(),
     new RecentGuides().import(),
-    // importRoadmap.importRoadmap(),
-    // importWorkingGroups.importWorkingGroups(),
-    // importAdVendorList.importAdVendorList(),
+    importRoadmap.importRoadmap(),
+    importWorkingGroups.importWorkingGroups(),
+    importAdVendorList.importAdVendorList(),
   ]);
 }
 
@@ -271,9 +271,9 @@ function importAll() {
  *
  * @return {Promise}
  */
-// function importComponents() {
-//   return new ComponentReferenceImporter().import();
-// }
+function importComponents() {
+  return new ComponentReferenceImporter().import();
+}
 
 /**
  * Builds playground and boilerplate generator, imports all remote documents,
@@ -287,7 +287,6 @@ function buildPrepare(done) {
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
     gulp.parallel(
-      // This is the correct gulp.parallel block
       buildPlayground,
       buildBoilerplate,
       // buildPixi,
@@ -299,26 +298,23 @@ function buildPrepare(done) {
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
       // Local path to the archive containing artifacts of the first stage
-      // Comment out or remove these unused variable declarations:
-      // const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
-      /*
-       * Comment out the entire SETUP_STORED_PATHS array block
-       * to avoid SyntaxError: Unexpected token ']'
-       */
-      // const SETUP_STORED_PATHS = [
-      //   './pages/content/',
-      //   './pages/shared/',
-      //   './dist/',
-      //   './boilerplate/lib/',
-      //   './boilerplate/dist/',
-      //   './playground/dist/',
-      //   './frontend21/dist/',
-      //   './.cache/',
-      //   './examples/static/samples/samples.json',
-      // ];
-      // await sh(`mkdir -p artifacts`); // Commented out this line
-      // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
-    }, // This comma is important if packArtifacts is part of a series/parallel array
+      const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
+      // All paths that contain altered files at build setup time
+      const SETUP_STORED_PATHS = [
+        './pages/content/',
+        './pages/shared/',
+        './dist/',
+        './boilerplate/lib/',
+        './boilerplate/dist/',
+        './playground/dist/',
+        './frontend21/dist/',
+        './.cache/',
+        './examples/static/samples/samples.json',
+      ];
+
+      await sh('mkdir -p artifacts');
+      await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`);
+    },
     // eslint-disable-next-line prefer-arrow-callback
     function exit(_done) {
       done();
@@ -335,7 +331,7 @@ function buildPrepare(done) {
  */
 function unpackArtifacts() {
   let stream = gulp.src(['artifacts/**/*.tar.gz', 'artifacts/**/*.zip'], {
-    read: false,
+    'read': false,
   });
 
   stream = stream.pipe(
@@ -451,8 +447,8 @@ function buildPages(done) {
               return {
                 from,
                 to,
-                status: 302,
-                force: true,
+                'status': 302,
+                'force': true,
               };
             });
 
@@ -520,9 +516,9 @@ function nunjucksEnv() {
     'SupportedFormatsExtension',
     new SupportedFormatsExtension()
   );
-  // env.addFilter('importBlog', importBlog, true); // Commented out this line
+  env.addFilter('importBlog', importBlog, true);
 
-  // env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
+  env.addFilter('importYouTubeChannel', importYouTubeChannel, true);
   env.addFilter('survey', survey, true);
 
   return env;
@@ -669,8 +665,7 @@ function minifyPages() {
         callback(null, page);
       })
     )
-    .pipe(gulp.dest((f) => f.base))
-    .on('end', cb);
+    .pipe(gulp.dest(`${project.paths.PAGES_DEST}`));
 }
 
 /**
@@ -707,13 +702,13 @@ function collectStatics(done) {
           const archive =
             archives[relativePath] ||
             archiver('zip', {
-              zlib: {level: 9},
+              'zlib': {'level': 9},
             });
 
           // Only append real files, directories will be created automatically
           const filePath = file.relative.replace(relativePath, '');
           if (!file.stat.isDirectory() && filePath) {
-            archive.append(file.contents, {name: filePath});
+            archive.append(file.contents, {'name': filePath});
           }
 
           archives[relativePath] = archive;
@@ -766,13 +761,13 @@ function collectStatics(done) {
  */
 function persistBuildInfo(done) {
   const buildInfo = {
-    number: process.env.GITHUB_RUN_ID || null,
-    at: new Date(),
-    by: process.env.GITHUB_ACTOR || git.user(),
-    environment: config.environment,
-    commit: {
-      sha: process.env.GITHUB_SHA || git.version(),
-      message: git.message(),
+    'number': process.env.GITHUB_RUN_ID || null,
+    'at': new Date(),
+    'by': process.env.GITHUB_ACTOR || git.user(),
+    'environment': config.environment,
+    'commit': {
+      'sha': process.env.GITHUB_SHA || git.version(),
+      'message': git.message(),
     },
   };
 
@@ -784,9 +779,9 @@ exports.sass = sass;
 exports.icons = icons;
 exports.templates = templates;
 exports.importAll = importAll;
-// exports.importComponents = importComponents; // This line is now commented out
+exports.importComponents = importComponents;
 exports.buildPlayground = buildPlayground;
-// exports.buildPixi = buildPixi;
+exports.buildPixi = buildPixi;
 exports.buildBoilerplate = buildBoilerplate;
 exports.buildFrontend = buildFrontend;
 exports.buildSamples = buildSamples;
@@ -798,10 +793,10 @@ exports.staticify = staticify;
 exports.unpackArtifacts = unpackArtifacts;
 exports.collectStatics = collectStatics;
 exports.whoAmI = whoAmI;
-// exports.buildPixiFunctions = buildPixiFunctions;
+exports.buildPixiFunctions = buildPixiFunctions;
 exports.buildFinalize = gulp.series(
-  gulp.parallel(collectStatics, persistBuildInfo)
-  //  thumborImageIndex,
+  gulp.parallel(collectStatics, persistBuildInfo),
+  thumborImageIndex
 );
 
 exports.build = gulp.series(
