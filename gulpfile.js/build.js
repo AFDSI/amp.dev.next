@@ -294,13 +294,18 @@ function buildPrepare(done) {
       importAll,
       zipTemplates
     ),
+// ... (inside buildPrepare function)
     // eslint-disable-next-line prefer-arrow-callback
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
       // Local path to the archive containing artifacts of the first stage
+      // Comment out or remove these unused variable declarations:
       // const SETUP_ARCHIVE = 'artifacts/setup.tar.gz';
-      // All paths that contain altered files at build setup time
-      // eslint-disable-next-line no-unused-vars
+
+      /*
+       * Comment out the entire SETUP_STORED_PATHS array block
+       * to avoid SyntaxError: Unexpected token ']'
+       */
       // const SETUP_STORED_PATHS = [
       //   './pages/content/',
       //   './pages/shared/',
@@ -311,12 +316,12 @@ function buildPrepare(done) {
       //   './frontend21/dist/',
       //   './.cache/',
       //   './examples/static/samples/samples.json',
-      ];
+      // ];
 
       // await sh(`mkdir -p artifacts`); // Commented out this line
       // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
     },
-    // eslint-disable-next-line prefer-arrow-callback
+// ... (rest of the buildPrepare function)
     function exit(_done) {
       done();
       _done();
