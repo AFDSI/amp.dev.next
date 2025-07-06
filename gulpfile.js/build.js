@@ -287,7 +287,6 @@ function buildPrepare(done) {
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
     gulp.parallel(
-      // This is the correct gulp.parallel block
       buildPlayground,
       buildBoilerplate,
       // buildPixi,
@@ -295,8 +294,6 @@ function buildPrepare(done) {
       importAll,
       zipTemplates
     ),
-    // ... (inside buildPrepare function)
-    // eslint-disable-next-line prefer-arrow-callback
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
       // Local path to the archive containing artifacts of the first stage
@@ -304,7 +301,6 @@ function buildPrepare(done) {
       // All paths that contain altered files at build setup time
       // eslint-disable-next-line no-unused-vars
       const SETUP_STORED_PATHS = [
-        // Uncomment this line and the array content
         './pages/content/',
         './pages/shared/',
         './dist/',
@@ -316,10 +312,9 @@ function buildPrepare(done) {
         './examples/static/samples/samples.json',
       ];
 
-      await sh(`mkdir -p artifacts`); // Uncomment this line
-      await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Uncomment this line
-    }, // This comma is important if packArtifacts is part of a series/parallel array
-    // ... (rest of the buildPrepare function)
+      await sh(`mkdir -p artifacts`);
+      await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`);
+    },
 
     (_done) => {
       done();
