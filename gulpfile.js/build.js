@@ -32,7 +32,7 @@ const {samplesBuilder} = require('@lib/build/samplesBuilder');
 const {project} = require('@lib/utils');
 const git = require('@lib/utils/git');
 const ComponentReferenceImporter = require('@lib/pipeline/componentReferenceImporter');
-const SpecImporter = require('@lib/pipeline/specImporter');
+// const SpecImporter = require('@lib/pipeline/specImporter');
 const RecentGuides = require('@lib/pipeline/recentGuides');
 const gulpSass = require('gulp-sass')(require('sass'));
 // const importRoadmap = require('./import/importRoadmap.js');
@@ -46,7 +46,6 @@ const {PIXI_CLOUD_ROOT} = require('@lib/utils/project').paths;
 const {copyFile} = require('fs/promises');
 const nunjucks = require('nunjucks');
 // const {importBlog} = require('@lib/templates/ImportBlogFilter.js');
-// Corrected (Prettier-compliant) and commented-out block
 // const {
 //     importYouTubeChannel,
 // } = require('@lib/templates/ImportYouTubeChannel.js');
@@ -259,7 +258,7 @@ function zipTemplates() {
 function importAll() {
   return Promise.all([
     new ComponentReferenceImporter().import(),
-    new SpecImporter().import(),
+    // new SpecImporter().import(),
     new RecentGuides().import(),
     // importRoadmap.importRoadmap(),
     // importWorkingGroups.importWorkingGroups(),
