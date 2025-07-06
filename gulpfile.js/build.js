@@ -294,7 +294,15 @@ function buildPrepare(done) {
       importAll,
       zipTemplates
     ),
-// ... (inside buildPrepare function)
+// ... (inside buildPrepare function, before packArtifacts)
+    gulp.parallel(
+      buildPlayground,
+      buildBoilerplate,
+      // buildPixi,
+      buildFrontend21,
+      importAll,
+      zipTemplates
+    ),
     // eslint-disable-next-line prefer-arrow-callback
     async function packArtifacts() {
       // Store everything built so far for later stages to pick up
@@ -320,8 +328,16 @@ function buildPrepare(done) {
 
       // await sh(`mkdir -p artifacts`); // Commented out this line
       // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
-    },
-// ... (rest of the buildPrepare function)
+    }, // This comma is important if packArtifacts is part of a series/parallel array
+    // eslint-disable-next-line prefer-arrow-callback
+    function exit(_done) {
+      done();
+      _done();
+      process.exit(0);
+    }
+  )(done);
+}
+// ... (rest of the file)
     function exit(_done) {
       done();
       _done();
