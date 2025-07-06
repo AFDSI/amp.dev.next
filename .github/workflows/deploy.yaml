@@ -70,6 +70,16 @@ jobs:
       - name: Installing Node.js packages
         run: npm ci
 
+      - name: Cache GitHub Importer data
+        uses: actions/cache@v4
+        with:
+          path: |
+            platform/cache # This is a common cache directory for amp.dev's importer
+            platform/tmp   # Another potential cache/temp directory
+          key: ${{ runner.os }}-importer-cache-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-importer-cache-
+
       - name: Preparing build
         env:
           APP_ENV: production
