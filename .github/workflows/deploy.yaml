@@ -47,6 +47,14 @@ jobs:
       - name: Installing Node.js packages
         run: npm ci
 
+      # --- ADD THIS STEP ---
+      - name: Fetching build artifacts for tests
+        uses: actions/download-artifact@v4
+        with:
+          name: build-setup # This matches the name used in the 'prepare' job
+          path: . # Download to the current working directory (repo root)
+      # ---------------------
+
       - name: Running tests
         run: |
           npx gulp updateTestResources
