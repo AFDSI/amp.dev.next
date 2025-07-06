@@ -47,12 +47,17 @@ jobs:
       - name: Installing Node.js packages
         run: npm ci
 
-      # --- ADD THIS STEP ---
       - name: Fetching build artifacts for tests
         uses: actions/download-artifact@v4
         with:
           name: build-setup # This matches the name used in the 'prepare' job
-          path: . # Download to the current working directory (repo root)
+          path: artifacts # Download to a temporary 'artifacts' directory
+
+      # --- ADD THIS STEP ---
+      - name: Unpacking artifacts for tests
+        run: |
+          tar xf artifacts/build-setup/setup.tar.gz -C . # Unpack the tarball from artifacts/build-setup into the current directory
+          rm -rf artifacts # Clean up the downloaded artifact directory
       # ---------------------
 
       - name: Running tests
