@@ -286,16 +286,7 @@ function buildPrepare(done) {
     // Build playground and boilerplate that early in the flow as they are
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
-    gulp.parallel(
-      buildPlayground,
-      buildBoilerplate,
-      // buildPixi,
-      buildFrontend21,
-      importAll,
-      zipTemplates
-    ),
-// ... (inside buildPrepare function, before packArtifacts)
-    gulp.parallel(
+    gulp.parallel( // This is the correct gulp.parallel block
       buildPlayground,
       buildBoilerplate,
       // buildPixi,
@@ -330,14 +321,6 @@ function buildPrepare(done) {
       // await sh(`tar cfj ${SETUP_ARCHIVE} ${SETUP_STORED_PATHS.join(' ')}`); // Commented out this line
     }, // This comma is important if packArtifacts is part of a series/parallel array
     // eslint-disable-next-line prefer-arrow-callback
-    function exit(_done) {
-      done();
-      _done();
-      process.exit(0);
-    }
-  )(done);
-}
-// ... (rest of the file)
     function exit(_done) {
       done();
       _done();
@@ -830,3 +813,4 @@ exports.build = gulp.series(
 );
 
 exports.buildForGrowTests = gulp.series(buildBoilerplate, buildPages);
+
