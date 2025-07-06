@@ -801,7 +801,7 @@ exports.whoAmI = whoAmI;
 // exports.buildPixiFunctions = buildPixiFunctions;
 exports.buildFinalize = gulp.series(
   gulp.parallel(collectStatics, persistBuildInfo),
-  thumborImageIndex,
+//  thumborImageIndex,
 );
 
 exports.build = gulp.series(
