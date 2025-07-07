@@ -33,6 +33,8 @@ jobs:
           paths_ignore: '["**/README.md", "**/docs/**"]'
           do_not_skip: '["workflow_dispatch", "schedule"]'
   verify:
+    # This job needs prepare and will use its output.
+    needs: prepare # Keep this correct dependency
     runs-on: ubuntu-latest
     steps:
       - name: Cloning repository
@@ -50,7 +52,7 @@ jobs:
       - name: Fetching build artifacts for tests
         uses: actions/download-artifact@v4
         with:
-          name: build-setup # This matches the name used in the 'prepare' job
+          name: ${{ needs.prepare.outputs.artifact_name }} # Use output from prepare job
           path: artifacts # Download to a temporary 'artifacts' directory
           # --- ADD THIS LINE ---
           run-id: ${{ github.run_id }} # Explicitly tell it the current workflow run ID
@@ -80,6 +82,8 @@ jobs:
           npm run test:playground
   prepare:
     runs-on: ubuntu-latest
+    outputs: # Define output for artifact name
+      artifact_name: build-setup # Output the artifact name
     steps:
       - name: Cloning repository
         uses: actions/checkout@v4
