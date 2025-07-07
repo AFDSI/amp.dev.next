@@ -1,7 +1,7 @@
 ---
 name: Deploy
 run-name: Deploy to ${{ inputs.deploy-environment || 'Staging' }}
-# Triggering a new build for debugging artifacts
+
 on:
   workflow_dispatch:
     inputs:
@@ -34,7 +34,7 @@ jobs:
           do_not_skip: '["workflow_dispatch", "schedule"]'
   verify:
     # This job needs prepare and will use its output.
-    needs: prepare # Keep this correct dependency
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - name: Cloning repository
@@ -59,9 +59,7 @@ jobs:
         with:
           name: ${{ needs.prepare.outputs.artifact_name }} # Use output from prepare job
           path: artifacts # Download to a temporary 'artifacts' directory
-          # --- ADD THIS LINE ---
           run-id: ${{ github.run_id }} # Explicitly tell it the current workflow run ID
-          # ---------------------
 
       # --- ADD DEBUG STEP 1 ---
       - name: List downloaded artifacts
