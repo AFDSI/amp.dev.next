@@ -287,9 +287,14 @@ function buildPrepare(done) {
     // fairly quick to build and would be annoying to eventually fail downstream
     buildSamples,
     // --- ADD THIS STEP ---
-    async function copySamplesJson() {
-      const sourcePath = project.absolute('examples/static/samples/samples.json');
-      const destPath = path.join(project.paths.STATICS_DEST, 'samples/samples.json');
+    async () => {
+      const sourcePath = project.absolute(
+        'examples/static/samples/samples.json'
+      );
+      const destPath = path.join(
+        project.paths.STATICS_DEST,
+        'samples/samples.json'
+      );
       await mkdirp(path.dirname(destPath)); // Ensure destination directory exists
       await copyFile(sourcePath, destPath);
       signale.success(`Copied samples.json from ${sourcePath} to ${destPath}`);
@@ -303,7 +308,7 @@ function buildPrepare(done) {
       importAll,
       zipTemplates
     ),
-    async function packArtifacts() {
+    async () => {
       // Store everything built so far for later stages to pick up
       // Local path to the archive containing artifacts of the first stage
       const SETUP_ARCHIVE = 'artifacts/setup.tar.gz'; // Uncomment this line
