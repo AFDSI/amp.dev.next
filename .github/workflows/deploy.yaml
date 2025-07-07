@@ -108,11 +108,21 @@ jobs:
         run: |
           npx gulp buildPrepare
 
+      # --- ADD DEBUG STEP 1 (after buildPrepare) ---
+      - name: List dist/static/samples after buildPrepare
+        run: ls -R dist/static/samples/
+      # ---------------------------------------------
+
       - name: Storing build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-setup
           path: artifacts/setup.tar.gz
+
+      # --- ADD DEBUG STEP 2 (after upload) ---
+      - name: List artifacts directory after upload
+        run: ls -R artifacts/
+      # ---------------------------------------
 
   build:
     env:
