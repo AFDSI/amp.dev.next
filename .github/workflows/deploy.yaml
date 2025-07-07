@@ -76,7 +76,6 @@ jobs:
           npm run test:platform
           npm run test:playground
   prepare:
-    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Cloning repository
@@ -127,7 +126,7 @@ jobs:
   build:
     env:
       APP_ENV: production
-    needs: prepare
+    needs: verify
     strategy:
       matrix:
         language:
