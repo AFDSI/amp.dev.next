@@ -53,12 +53,20 @@ jobs:
           name: build-setup # This matches the name used in the 'prepare' job
           path: artifacts # Download to a temporary 'artifacts' directory
 
-      # --- ADD THIS STEP ---
+      # --- ADD DEBUG STEP 1 ---
+      - name: List downloaded artifacts
+        run: ls -R artifacts
+      # ------------------------
+
       - name: Unpacking artifacts for tests
         run: |
           tar xf artifacts/build-setup/setup.tar.gz -C . # Unpack the tarball from artifacts/build-setup into the current directory
           rm -rf artifacts # Clean up the downloaded artifact directory
-      # ---------------------
+
+      # --- ADD DEBUG STEP 2 ---
+      - name: List dist directory after unpacking
+        run: ls -R dist
+      # ------------------------
 
       - name: Running tests
         run: |
