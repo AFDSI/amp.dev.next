@@ -52,6 +52,9 @@ jobs:
         with:
           name: build-setup # This matches the name used in the 'prepare' job
           path: artifacts # Download to a temporary 'artifacts' directory
+          # --- ADD THIS LINE ---
+          run-id: ${{ github.run_id }} # Explicitly tell it the current workflow run ID
+          # ---------------------
 
       # --- ADD DEBUG STEP 1 ---
       - name: List downloaded artifacts
