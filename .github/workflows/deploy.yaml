@@ -1,7 +1,7 @@
 ---
 name: Deploy
 run-name: Deploy to ${{ inputs.deploy-environment || 'Staging' }}
-
+# Triggering a new build for debugging artifacts
 on:
   workflow_dispatch:
     inputs:
