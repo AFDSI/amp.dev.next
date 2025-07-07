@@ -49,6 +49,11 @@ jobs:
       - name: Installing Node.js packages
         run: npm ci
 
+      # --- ADD DEBUG STEP HERE ---
+      - name: Print github.run_id for artifact download
+        run: echo "Attempting to download artifact with run-id: ${{ github.run_id }}"
+      # ---------------------------
+
       - name: Fetching build artifacts for tests
         uses: actions/download-artifact@v4
         with:
